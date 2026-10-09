@@ -31,7 +31,7 @@ jobs:
       # extra dependency — the runner already has bun and the install above.
       - name: Test web
         working-directory: web
-        run: bun test
+        run: bun test src/ scripts/
 
       # tsc -b cannot read .svelte files, so every Svelte script block in this
       # repo went untyped until svelte-check was added. That hole shipped a
