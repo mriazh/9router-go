@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte'
+  import { filterAndSortModels, type ModelTierFilter } from './modelTier'
   import {
     api,
     normalizeLastError,
@@ -222,6 +223,13 @@
   // the catalog ships as a static bundle, but caps depend on the provider
   // registry, the capability tables and the synced models.dev catalog.
   let modelCaps = $state<Record<string, ModelCaps>>({})
+  let modelTierFilter = $state<ModelTierFilter>('all')
+  let hasAnyFreeModels = $derived(
+    visibleModels.some((m) => Boolean(modelCaps[m.id]?.free))
+  )
+  let displayedModels = $derived(
+    filterAndSortModels(visibleModels, modelTierFilter, modelCaps)
+  )
   // Union of the thinking levels this provider's models accept, with the
   // explicit "auto" reset first — upstream providerThinkingLevels
   // (dashboard/providers/[id]/page.js:186). null hides the picker entirely for a
@@ -2573,7 +2581,7 @@
     // visibleModels, not allAvailableModels: the table below renders exactly
     // this list, so probing a disabled model produced a verdict no row could
     // show and spent an upstream request on a model the operator switched off.
-    await runModelSweep(visibleModels.map((m) => m.id))
+    await runModelSweep(displayedModels.map((m) => m.id))
   }
 
   // A blocked model was never asked anything, so re-testing only those is
@@ -3603,6 +3611,31 @@
             {modelDeprecationCount} deprecated
           </span>
         {/if}
+        {#if hasAnyFreeModels}
+          <div class="inline-flex items-center rounded-lg border border-border bg-surface-2 p-0.5 text-xs">
+            <button
+              type="button"
+              onclick={() => (modelTierFilter = 'all')}
+              class="rounded-md px-2 py-0.5 font-medium transition-colors cursor-pointer {modelTierFilter === 'all' ? 'bg-surface text-text-main shadow-xs' : 'text-text-muted hover:text-text-main'}"
+            >
+              All
+            </button>
+            <button
+              type="button"
+              onclick={() => (modelTierFilter = 'free')}
+              class="rounded-md px-2 py-0.5 font-medium transition-colors cursor-pointer {modelTierFilter === 'free' ? 'bg-surface text-text-main shadow-xs' : 'text-text-muted hover:text-text-main'}"
+            >
+              Free only
+            </button>
+            <button
+              type="button"
+              onclick={() => (modelTierFilter = 'paid')}
+              class="rounded-md px-2 py-0.5 font-medium transition-colors cursor-pointer {modelTierFilter === 'paid' ? 'bg-surface text-text-main shadow-xs' : 'text-text-muted hover:text-text-main'}"
+            >
+              Paid only
+            </button>
+          </div>
+        {/if}
         {#if providerThinkingLevels}
         <select
           title="Appends (level) suffix to copied model names"
@@ -3683,7 +3716,7 @@
     {/if}
     <!-- Models flex-wrap list matching upstream -->
     <div class="flex flex-wrap gap-3">
-      {#each visibleModels as model (model.id)}
+      {#each displayedModels as model (model.id)}
         {@const level = resolveThinkingSuffix(model.id)}
         {@const fullModelId = `${storageAlias}/${model.id}${level ? `(${level})` : ''}`}
         {@const rowCaps = modelCaps[model.id] ?? model.caps}
@@ -3700,6 +3733,11 @@
                 <code class="max-w-[72vw] truncate rounded bg-sidebar px-1.5 py-0.5 font-mono text-xs text-text-muted sm:max-w-[360px]">
                   {fullModelId}
                 </code>
+                {#if rowCaps?.free}
+                  <span class="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                    FREE
+                  </span>
+                {/if}
                 {#if isSessionActive}
                   <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -3843,7 +3881,7 @@
         </button>
       {/if}
 
-      {#if visibleModels.length > 0}
+      {#if displayedModels.length > 0}
         <button
           type="button"
           onclick={handleCheckAllModels}
@@ -3854,7 +3892,7 @@
           <span class="material-symbols-outlined text-sm">{isCheckingAll ? 'progress_activity' : 'troubleshoot'}</span>
           {isCheckingAll
             ? `Checking ${checkAllProgress.done}/${checkAllProgress.total}...`
-            : `Check All Models (${visibleModels.length})`}
+            : `Check All Models (${displayedModels.length})`}
         </button>
       {/if}
 
