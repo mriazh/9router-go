@@ -708,6 +708,11 @@ func (h *ChatHandler) handleComboFallbackWithVisited(ctx context.Context, cw *co
 	// combo models must not re-select them (same account = same 429 quota).
 	var excludeIDs []string
 
+	settings, err := h.Repo.GetSettings()
+	if err != nil {
+		log.Warn("combo", "handleComboFallbackWithVisited GetSettings failed", "error", err)
+	}
+
 	// 1. Apply combo rotation strategy first. The smart strategy orders the
 	// models itself (System One evaluation + session stickiness) and carries
 	// its routing state on the context for the failure loop below.
@@ -787,13 +792,11 @@ func (h *ChatHandler) handleComboFallbackWithVisited(ctx context.Context, cw *co
 
 			candidateCtx := ctx
 			var seatBudgetMs int
-			if h.Repo != nil {
-				if settings, err := h.Repo.GetSettings(); err == nil && settings != nil {
-					seatBudgetMs = settings.SeatAttemptBudgetMs
-					if settings.ProviderOverrides != nil {
-						if ov, ok := settings.ProviderOverrides[modelInfo.Provider]; ok && ov.SeatBudgetMs > 0 {
-							seatBudgetMs = ov.SeatBudgetMs
-						}
+			if settings != nil {
+				seatBudgetMs = settings.SeatAttemptBudgetMs
+				if settings.ProviderOverrides != nil {
+					if ov, ok := settings.ProviderOverrides[modelInfo.Provider]; ok && ov.SeatBudgetMs > 0 {
+						seatBudgetMs = ov.SeatBudgetMs
 					}
 				}
 			}
