@@ -41,18 +41,15 @@ func TestHCNSecProvider_Models(t *testing.T) {
 }
 
 func TestHCNSecProvider_Capabilities(t *testing.T) {
-	caps := GetCapabilitiesForModel("hcnsec", "DeepSeek-V4-Flash")
+	caps := GetCapabilitiesForModel("hcnsec", "MiniCPM-V-4.7-35B-A3B")
 	if !caps.Vision {
-		t.Error("expected Vision=true for DeepSeek-V4-Flash on hcnsec")
+		t.Error("expected Vision=true for MiniCPM-V-4.7-35B-A3B on hcnsec")
 	}
-	if !caps.Tools {
-		t.Error("expected Tools=true for DeepSeek-V4-Flash on hcnsec")
+	if !caps.Reasoning {
+		t.Error("expected Reasoning=true for MiniCPM-V-4.7-35B-A3B on hcnsec")
 	}
 	if kind := GetProviderModelKind("hcnsec", "Qwen3-Embedding-8B"); kind != "embedding" {
 		t.Errorf("GetProviderModelKind('hcnsec', 'Qwen3-Embedding-8B') = %q, want 'embedding'", kind)
-	}
-	if kind := GetProviderModelKind("hcnsec", "stepaudio-2.5-asr"); kind != "stt" {
-		t.Errorf("GetProviderModelKind('hcnsec', 'stepaudio-2.5-asr') = %q, want 'stt'", kind)
 	}
 	if kind := GetProviderModelKind("hcnsec", "stepaudio-2.5-tts"); kind != "tts" {
 		t.Errorf("GetProviderModelKind('hcnsec', 'stepaudio-2.5-tts') = %q, want 'tts'", kind)

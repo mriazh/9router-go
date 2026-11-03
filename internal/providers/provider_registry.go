@@ -145,7 +145,7 @@ var ProviderRegistry = map[string]ProviderMeta{
 		AuthType:      "apikey",
 		Color:         "#0284C7",
 		Icon:          "security",
-		ServiceKinds:  []string{"llm", "stt", "tts", "embedding"},
+		ServiceKinds:  []string{"llm", "tts", "embedding"},
 		Website:       "https://api.hcnsec.cn",
 		Notice:        &Notice{Text: "OpenAI-compatible gateway from HCNSec, offering multi-vendor models, speech, and embeddings. Accepts a bearer token.", APIKeyURL: "https://api.hcnsec.cn"},
 		ModelsFetcher: &Fetcher{URL: "https://api.hcnsec.cn/v1/models", Type: "openai"},

@@ -14,6 +14,7 @@ export interface ProviderModel {
 }
 
 export const PROVIDER_ID_TO_ALIAS: Record<string, string> = {
+  "hcnsec": "hc",
   "zcode": "zcode",
   "agnes": "agnes",
   "bai": "bai",
@@ -2498,6 +2499,27 @@ export const BUILTIN_MODELS_BY_PROVIDER: Record<string, ProviderModel[]> = {
       "id": "glm-5.3-flash",
       "name": "GLM 5.3 Flash"
     }
+  ],
+  "hcnsec": [
+    { "id": "auto", "name": "Auto" },
+    { "id": "DeepSeek-V4-Flash", "name": "DeepSeek V4 Flash" },
+    { "id": "DeepSeek-V4-Pro", "name": "DeepSeek V4 Pro" },
+    { "id": "DeepSeek-V4.1-Flash", "name": "DeepSeek V4.1 Flash" },
+    { "id": "glm-5.3", "name": "GLM 5.3" },
+    { "id": "glm-5.3-flash", "name": "GLM 5.3 Flash" },
+    { "id": "MiMo-V2.6-Flash", "name": "MiMo V2.6 Flash" },
+    { "id": "MiniCPM-V-4.7-35B-A3B", "name": "MiniCPM-V 4.7 35B" },
+    { "id": "MiniMax-M3.1-Flash", "name": "MiniMax M3.1 Flash" },
+    { "id": "Qwen3-Embedding-8B", "name": "Qwen3 Embedding 8B", "kind": "embedding" },
+    { "id": "Qwen3.8-27B", "name": "Qwen 3.8 27B" },
+    { "id": "Qwen3.8-Flash-Next", "name": "Qwen 3.8 Flash Next" },
+    { "id": "sensenova-6.8-flash-lite", "name": "SenseNova 6.8 Flash Lite" },
+    { "id": "sensenova-u1.5-lite", "name": "SenseNova U1.5 Lite" },
+    { "id": "step-5-preview", "name": "Step 5 Preview" },
+    { "id": "stepaudio-2.5-asr", "name": "StepAudio 2.5 ASR" },
+    { "id": "stepaudio-2.5-chat", "name": "StepAudio 2.5 Chat" },
+    { "id": "stepaudio-2.5-realtime", "name": "StepAudio 2.5 Realtime" },
+    { "id": "stepaudio-2.5-tts", "name": "StepAudio 2.5 TTS", "kind": "tts" }
   ],
   "glm": [
     {
