@@ -926,9 +926,7 @@ export const BUILTIN_MODELS_BY_PROVIDER: Record<string, ProviderModel[]> = {
     {
       "id": "@cf/black-forest-labs/flux-1-schnell",
       "name": "FLUX.1 Schnell",
-      "params": [
-        "size"
-      ],
+      "params": [],
       "kind": "image"
     },
     {
@@ -2276,6 +2274,16 @@ export const BUILTIN_MODELS_BY_PROVIDER: Record<string, ProviderModel[]> = {
     {
       "id": "gemini-2.5-pro-preview-tts",
       "name": "Gemini 2.5 Pro TTS",
+      "kind": "tts"
+    },
+    {
+      "id": "gemini-3.8-flash-tts",
+      "name": "Gemini 3.8 Flash TTS",
+      "kind": "tts"
+    },
+    {
+      "id": "gemini-3.8-flash-lite-tts",
+      "name": "Gemini 3.8 Flash Lite TTS",
       "kind": "tts"
     },
     {
