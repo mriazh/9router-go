@@ -66,16 +66,24 @@ func TestForgetOpencodeStableSession(t *testing.T) {
 		t.Error("a keyed lane must yield no drop hook")
 	}
 
-	drop := forgetOpencodeStableSession(&Request{ConnectionID: "conn-drop"}, true, "ses_drop")
+	const stableKey = "opencode:conn:conn-drop"
+	// Record two uses so the session is established (uses > 1): a single mint
+	// leaves uses == 1, which StableOpenCodeSessionEstablished reports as false.
+	first := proxy.StableOpenCodeSessionID(stableKey)
+	second := proxy.StableOpenCodeSessionID(stableKey)
+	if first != second {
+		t.Fatalf("setup: stable session rotated within one TTL window: %q -> %q", first, second)
+	}
+	if !proxy.StableOpenCodeSessionEstablished(stableKey, second) {
+		t.Fatal("setup: stable session must be established (uses > 1) before the drop")
+	}
+
+	drop := forgetOpencodeStableSession(&Request{ConnectionID: "conn-drop"}, true, second)
 	if drop == nil {
 		t.Fatal("expected a drop hook for a stable-session request")
 	}
-	id := proxy.StableOpenCodeSessionID("opencode:conn:conn-drop")
-	if !proxy.StableOpenCodeSessionEstablished("opencode:conn:conn-drop", id) && id == "" {
-		t.Fatal("setup: stable session must exist before the drop")
-	}
 	drop()
-	if proxy.StableOpenCodeSessionEstablished("opencode:conn:conn-drop", id) {
+	if proxy.StableOpenCodeSessionEstablished(stableKey, second) {
 		t.Error("the drop hook must remove the session from the cache")
 	}
 }
